@@ -2,6 +2,8 @@ package de.eit62.iteam.workangel.beans;
 
 import android.graphics.Bitmap;
 
+import java.util.List;
+
 /**
  * Bean for users.
  *
@@ -9,30 +11,29 @@ import android.graphics.Bitmap;
  */
 public class User extends AppUser {
 	
-	private int user_ID;
+	private int userID;
 	private String lastName;
 	private String forename;
-	private String description;
-	private Bitmap userPicture;
 	
-	public User(int user_ID, String lastName, String forename, String description,
-	
-				String username, Bitmap userPicture) {
-		super(username);
-		this.user_ID = user_ID;
+	public User(int userID,
+				String lastName,
+				String forename,
+				String description,
+				String username,
+				Bitmap userPicture,
+				List<Skill> skills) {
+		super(username, userPicture, description, skills);
+		this.userID = userID;
 		this.lastName = lastName;
 		this.forename = forename;
-		this.description = description;
-		this.username = username;
-		this.userPicture = userPicture;
 	}
 	
-	public int getUser_ID() {
-		return user_ID;
+	public int getUserID() {
+		return userID;
 	}
 	
-	public void setUser_ID(int user_ID) {
-		this.user_ID = user_ID;
+	public void setUserID(int userID) {
+		this.userID = userID;
 	}
 	
 	public String getLastName() {
@@ -49,29 +50,5 @@ public class User extends AppUser {
 	
 	public void setForename(String forename) {
 		this.forename = forename;
-	}
-	
-	public String getDescription() {
-		return description;
-	}
-	
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public String getUsername() {
-		return username;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	public Bitmap getUserPicture() {
-		return userPicture;
-	}
-	
-	public void setUserPicture(Bitmap userPicture) {
-		this.userPicture = userPicture;
 	}
 }

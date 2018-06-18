@@ -11,8 +11,8 @@ import de.eit62.iteam.workangel.webservice.WAServiceClient;
 
 public class TaskFragment extends Fragment {
 	
+	// intentionally raw for the moment
 	private TaskCallback callbacks;
-	private UserLoginTask loginTask;
 	
 	@Override
 	public void onAttach(Context context) {
@@ -28,7 +28,7 @@ public class TaskFragment extends Fragment {
 	}
 	
 	public void executeLogin(String username, char[] password) {
-		loginTask = new UserLoginTask();
+		UserLoginTask loginTask = new UserLoginTask();
 		loginTask.execute(username, password);
 	}
 	
@@ -49,7 +49,7 @@ public class TaskFragment extends Fragment {
 		void onPostExecute(Result result);
 	}
 	
-	private class UserLoginTask extends AsyncTask<Object, Void, AppUser> {
+	private static class UserLoginTask extends AsyncTask<Object, Void, AppUser> {
 		
 		private final WAServiceClient serviceClient = WAServiceClient.getInstance();
 		private String username;

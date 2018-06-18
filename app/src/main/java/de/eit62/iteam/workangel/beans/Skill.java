@@ -1,7 +1,7 @@
 package de.eit62.iteam.workangel.beans;
 
 public class Skill {
-
+	
 	private int skill_ID;
 	private String name;
 	private String description;

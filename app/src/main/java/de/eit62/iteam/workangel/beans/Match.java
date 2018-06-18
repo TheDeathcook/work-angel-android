@@ -7,17 +7,61 @@ package de.eit62.iteam.workangel.beans;
  */
 public class Match {
 	
-	private int employer_ID;
-	private int user_ID;
-	private int compatiblity;
-	private boolean user_accepted;
-	private boolean employer_accepted;
+	private int employerID;
+	private int userID;
+	private int compatibility;
+	private Boolean userAccepted;
+	private Boolean employerAccepted;
 	
-	public Match(int employer_ID, int user_ID, int compatiblity, boolean user_accepted, boolean employer_accepted) {
-		this.employer_ID = employer_ID;
-		this.user_ID = user_ID;
-		this.compatiblity = compatiblity;
-		this.user_accepted = user_accepted;
-		this.employer_accepted = employer_accepted;
+	public Match(int employerID,
+				 int userID,
+				 int compatibility,
+				 Boolean userAccepted,
+				 Boolean employerAccepted) {
+		this.employerID = employerID;
+		this.userID = userID;
+		this.compatibility = compatibility;
+		this.userAccepted = userAccepted;
+		this.employerAccepted = employerAccepted;
+	}
+	
+	public int getEmployerID() {
+		return employerID;
+	}
+	
+	public void setEmployerID(int employerID) {
+		this.employerID = employerID;
+	}
+	
+	public int getUserID() {
+		return userID;
+	}
+	
+	public void setUserID(int userID) {
+		this.userID = userID;
+	}
+	
+	public int getCompatibility() {
+		return compatibility;
+	}
+	
+	public void setCompatibility(int compatibility) {
+		this.compatibility = compatibility;
+	}
+	
+	public Boolean isUserAccepted() {
+		return userAccepted;
+	}
+	
+	public void setUserAccepted(Boolean userAccepted) {
+		this.userAccepted = userAccepted;
+	}
+	
+	public Boolean isEmployerAccepted() {
+		return employerAccepted;
+	}
+	
+	public void setEmployerAccepted(Boolean employerAccepted) {
+		this.employerAccepted = employerAccepted;
 	}
 }
