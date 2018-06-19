@@ -3,10 +3,12 @@ package de.eit62.iteam.workangel.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
+import de.eit62.iteam.workangel.beans.Employer;
+import de.eit62.iteam.workangel.beans.Match;
+import de.eit62.iteam.workangel.beans.Skill;
+import de.eit62.iteam.workangel.beans.User;
 import org.json.JSONArray;
 
 import java.io.IOException;
@@ -15,13 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import de.eit62.iteam.workangel.beans.Employer;
-import de.eit62.iteam.workangel.beans.Match;
-import de.eit62.iteam.workangel.beans.Skill;
-import de.eit62.iteam.workangel.beans.User;
-
 /**
- *
  * @author Felix Bergemann
  */
 public class Util {

@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-
 import de.eit62.iteam.workangel.R;
 import de.eit62.iteam.workangel.beans.AppUser;
 import de.eit62.iteam.workangel.fragments.TaskFragment;
@@ -42,8 +41,8 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 		if (this.taskFragment == null) {
 			this.taskFragment = new TaskFragment();
 			fragmentManager.beginTransaction()
-					.add(this.taskFragment, TAG_TASK_FRAGMENT)
-					.commit();
+						   .add(this.taskFragment, TAG_TASK_FRAGMENT)
+						   .commit();
 		}
 		
 		// Set up the login form.
@@ -78,11 +77,11 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 		
 		// Store values at the time of the login attempt.
 		String username = mEmailView.getText()
-								  .toString();
+									.toString();
 		// Store password in char[] as it is more secure.
 		char[] password = new char[mPasswordView.length()];
 		mPasswordView.getText()
-				.getChars(0, mPasswordView.length(), password, 0);
+					 .getChars(0, mPasswordView.length(), password, 0);
 		
 		boolean cancel = false;
 		View focusView = null;
