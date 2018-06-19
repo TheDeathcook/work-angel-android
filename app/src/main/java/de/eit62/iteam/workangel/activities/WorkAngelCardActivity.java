@@ -25,7 +25,8 @@ import de.eit62.iteam.workangel.beans.Match;
 import de.eit62.iteam.workangel.beans.User;
 
 /**
- * Created by Felix on 11.06.2018.
+ * @author Felix Bergemann
+ * @author Lukas Tegethoff
  */
 
 @Layout(R.layout.workangel_card_view)

@@ -20,6 +20,10 @@ import de.eit62.iteam.workangel.beans.Match;
 import de.eit62.iteam.workangel.beans.Skill;
 import de.eit62.iteam.workangel.beans.User;
 
+/**
+ *
+ * @author Felix Bergemann
+ */
 public class Util {
 	
 	private static final String TAG = "Utils";
