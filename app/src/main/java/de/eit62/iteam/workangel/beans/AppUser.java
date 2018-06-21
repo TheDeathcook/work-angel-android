@@ -1,15 +1,31 @@
 package de.eit62.iteam.workangel.beans;
 
 import android.graphics.Bitmap;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Abstract super class for a general user of the app.
+ *
+ * @author Lukas Tegthoff
+ */
 public abstract class AppUser {
 	
+	@SerializedName("Username")
 	private String username;
+	
+	@SerializedName("UserPicture")
 	private Bitmap picture;
+	
+	@SerializedName("Description")
 	private String description;
+	
 	private List<Skill> skills;
+	
+	public AppUser() {
+		// necessary for Gson
+	}
 	
 	public AppUser(String username, Bitmap picture, String description, List<Skill> skills) {
 		this.username = username;

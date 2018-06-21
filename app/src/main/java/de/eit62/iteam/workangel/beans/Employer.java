@@ -1,6 +1,7 @@
 package de.eit62.iteam.workangel.beans;
 
 import android.graphics.Bitmap;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -11,8 +12,15 @@ import java.util.List;
  */
 public class Employer extends AppUser {
 	
+	@SerializedName("Employer_ID")
 	private int employerID;
+	
+	@SerializedName("Name")
 	private String name;
+	
+	public Employer() {
+		// necessary for Gson
+	}
 	
 	public Employer(int employerID,
 					String name,

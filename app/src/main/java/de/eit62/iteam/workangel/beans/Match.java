@@ -1,5 +1,7 @@
 package de.eit62.iteam.workangel.beans;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Bean for match.
  *
@@ -7,11 +9,18 @@ package de.eit62.iteam.workangel.beans;
  */
 public class Match {
 	
+	@SerializedName("Employer_ID")
 	private int employerID;
+	
 	private int userID;
 	private int compatibility;
 	private Boolean userAccepted;
 	private Boolean employerAccepted;
+	
+	
+	public Match() {
+		// necessary for Gson
+	}
 	
 	public Match(int employerID,
 				 int userID,

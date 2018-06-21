@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		tools:showIn="@layout/activity_scrolling"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:fillViewport="true"
+		tools:context=".activities.ProfileActivity">
+
+	<android.support.constraint.ConstraintLayout
+			android:layout_width="match_parent"
+			app:layout_behavior="@string/appbar_scrolling_view_behavior"
+			android:layout_height="match_parent">
+
+
+		<ImageView
+				android:layout_width="wrap_content"
+				android:layout_height="0dp"
+				android:id="@+id/profileImage"
+				app:srcCompat="@drawable/no_image_available"
+				app:layout_constraintStart_toStartOf="parent"
+				android:layout_marginStart="32dp"
+				app:layout_constraintEnd_toEndOf="parent"
+				android:layout_marginEnd="32dp"
+				app:layout_constraintTop_toTopOf="parent" />
+
+		<EditText
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:inputType="textPersonName"
+				android:text="Firstname"
+				android:ems="10"
+				android:id="@+id/firstnameText"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				android:layout_marginTop="8dp"
+				app:layout_constraintTop_toBottomOf="@+id/profileImage" />
+
+		<EditText
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:inputType="textPersonName"
+				android:ems="10"
+				android:id="@+id/lastnameText"
+				app:layout_constraintStart_toStartOf="parent"
+				app:layout_constraintEnd_toEndOf="parent"
+				android:layout_marginTop="8dp"
+				app:layout_constraintTop_toBottomOf="@+id/firstnameText"
+				android:text="Lastname" />
+
+		<EditText
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:inputType="textMultiLine"
+				android:ems="10"
+				android:id="@+id/descriptionText"
+				android:layout_marginTop="8dp"
+				app:layout_constraintTop_toBottomOf="@+id/lastnameText"
+				app:layout_constraintEnd_toEndOf="parent"
+				app:layout_constraintStart_toStartOf="parent"
+				android:text="Description" />
+
+		<Button
+				android:text="Save"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:id="@+id/saveButton"
+				app:layout_constraintStart_toStartOf="parent"
+				android:layout_marginStart="8dp"
+				android:layout_marginTop="16dp"
+				app:layout_constraintTop_toBottomOf="@+id/descriptionText" />
+
+	</android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

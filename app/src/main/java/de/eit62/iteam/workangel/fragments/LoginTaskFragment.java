@@ -6,21 +6,26 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import de.eit62.iteam.workangel.beans.AppUser;
+import de.eit62.iteam.workangel.interfaces.TaskCallback;
 import de.eit62.iteam.workangel.webservice.WAServiceClient;
 
 
 /**
+ * A retained Fragment which wraps the web service call to login a user.
+ *
  * @author Lukas Tegethoff
  */
-public class TaskFragment extends Fragment {
+public class LoginTaskFragment extends Fragment {
 	
-	// intentionally raw for the moment
-	private TaskCallback callbacks;
+	private final WAServiceClient serviceClient = WAServiceClient.getInstance();
+	private TaskCallback<Void, AppUser> callbacks;
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onAttach(Context context) {
 		super.onAttach(context);
-		callbacks = (TaskCallback) context;
+		// no instanceof check because if the context is not of this type, it doesn't make sense to continue
+		callbacks = (TaskCallback<Void, AppUser>) context;
 	}
 	
 	@Override
@@ -30,8 +35,14 @@ public class TaskFragment extends Fragment {
 		setRetainInstance(true);
 	}
 	
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		callbacks = null;
+	}
+	
 	/**
-	 * Initiates the login.
+	 * Initiates the (asynchronous) login.
 	 *
 	 * @param username the username
 	 * @param password the password of the user as {@code char[]}
@@ -41,26 +52,8 @@ public class TaskFragment extends Fragment {
 		loginTask.execute(username, password);
 	}
 	
-	@Override
-	public void onDetach() {
-		super.onDetach();
-		callbacks = null;
-	}
-	
-	public interface TaskCallback<Progress, Result> {
-		
-		void onPreExecute();
-		
-		void onProgressUpdate(Progress progress);
-		
-		void onCancelled();
-		
-		void onPostExecute(Result result);
-	}
-	
 	private class UserLoginTask extends AsyncTask<Object, Void, AppUser> {
 		
-		private final WAServiceClient serviceClient = WAServiceClient.getInstance();
 		private String username;
 		private char[] password;
 		

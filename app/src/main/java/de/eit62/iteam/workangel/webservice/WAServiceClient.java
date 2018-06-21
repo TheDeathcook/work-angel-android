@@ -1,13 +1,17 @@
 package de.eit62.iteam.workangel.webservice;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
-import com.google.gson.Gson;
+import android.util.Base64;
+import android.util.Log;
 import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import de.eit62.iteam.workangel.beans.AppUser;
 import de.eit62.iteam.workangel.beans.Employer;
+import de.eit62.iteam.workangel.beans.Skill;
 import de.eit62.iteam.workangel.beans.User;
+import de.eit62.iteam.workangel.util.Util;
 import okhttp3.*;
 
 import java.io.ByteArrayOutputStream;
@@ -19,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Implements web service calls to get user data and data related to users.
+ *
  * @author Lukas Tegethoff
  */
 public class WAServiceClient {
@@ -27,8 +33,6 @@ public class WAServiceClient {
 	private static final String BASE_URL = "http://192.168.178.78:8000/api/";
 	
 	private static WAServiceClient instance = new WAServiceClient();
-	
-	private static Gson gson = new Gson();
 	
 	private WAServiceClient() {
 		// just declared so it is private
@@ -57,51 +61,90 @@ public class WAServiceClient {
 	 */
 	@Nullable
 	public AppUser loginUser(String username, char[] password) {
-		String json = "{\"user\":\"" + username + "\",\"password\":\"" + Arrays.toString(password) + "\"}";
-		String user = getJson(Endpoints.LOGIN_USER, json);
+		String json = "{\"username\":\"" + username + "\",\"password\":\"" + Arrays.toString(password) + "\"}";
+		String user = getJson(Endpoints.LOGIN, json);
 		AppUser loggedInUser = null;
 		if (user != null) {
 			if (user.toLowerCase()
 					.contains("lastname")) {
 				// if there is a last name, the user can only be a normal user
-				loggedInUser = gson.fromJson(user, User.class);
+				loggedInUser = Util.GSON.fromJson(user, AppUser.class);
+				loggedInUser.setSkills(getSkillsForUser((User) loggedInUser));
 			} else {
 				// conversely, if there is no last name, the user must be an employer
-				loggedInUser = gson.fromJson(user, Employer.class);
+				loggedInUser = Util.GSON.fromJson(user, AppUser.class);
+				loggedInUser.setSkills(getSkillsForEmployer((Employer) loggedInUser));
 			}
 		}
 		return loggedInUser;
 	}
 	
+	public List<Skill> getSkillsForUser(User user) {
+		List<Skill> skillList = new ArrayList<>();
+		String json = "{\"user\":\"" + user.getUserID() + "\"}";
+		String skills = getJson(Endpoints.GET_SKILLS_USER, json);
+		if (skills != null) {
+			Type skillListType = new TypeToken<List<Skill>>() {}.getType();
+			try {
+				skillList = Util.GSON.fromJson(skills, skillListType);
+			} catch (JsonParseException e) {
+				Log.e("WEB_SERVICE", e.getMessage(), e);
+			}
+		}
+		return skillList;
+	}
+	
+	public List<Skill> getSkillsForEmployer(Employer employer) {
+		List<Skill> skillList = new ArrayList<>();
+		String json = "{\"emp\":\"" + employer.getEmployerID() + "\"}";
+		String skills = getJson(Endpoints.GET_SKILLS_EMPLOYER, json);
+		if (skills != null) {
+			Type skillListType = new TypeToken<List<Skill>>() {}.getType();
+			try {
+				skillList = Util.GSON.fromJson(skills, skillListType);
+			} catch (JsonParseException e) {
+				Log.e("WEB_SERVICE", e.getMessage(), e);
+			}
+		}
+		return skillList;
+	}
+	
 	public boolean updateUser(User user) {
-		byte[] pictureAsBytes = null;
+		String pictureAsString = null;
 		// convert Bitmap to byte array so it can be saved as blob in DB.
 		if (user.getPicture() != null) {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			user.getPicture()
 				.compress(Bitmap.CompressFormat.JPEG, 70, stream);
-			pictureAsBytes = stream.toByteArray();
+			byte[] pictureAsBytes = stream.toByteArray();
+			pictureAsString = Base64.encodeToString(pictureAsBytes, Base64.DEFAULT);
 		}
 		String json = "{" +
 				"\"username\":\"" + user.getUsername() + "\"" +
 				"\"lastname\":\"" + user.getLastName() + "\"" +
 				"\"forename\":\"" + user.getForename() + "\"" +
-				"\"descr\":\"" + user.getDescription() + "\"" +
-				"\"userpicture\":\"" + Arrays.toString(pictureAsBytes) + "\"" +
+				"\"descr\":\"" + user.getDescription()
+									 .replace("'", "''") + "\"" +
+				"\"userpicture\":\"" + pictureAsString + "\"" +
 				"}";
 		
 		String response = getJson(Endpoints.UPDATE_USER, json);
 		return response != null;
 	}
 	
-	public List<Employer> getEmployers() {
+	public List<Employer> getEmployers(SharedPreferences preferences) {
 		List<Employer> employerList = new ArrayList<>();
 		String result = getJson(Endpoints.GET_EMPLOYERS, null);
 		if (result != null) {
-			Type employerListType = new TypeToken<List<Employer>>() {
-			}.getType();
+			preferences.edit()
+					   .putString("employers", result)
+					   .apply();
+			Type employerListType = new TypeToken<List<AppUser>>() {}.getType();
 			try {
-				employerList = gson.fromJson(result, employerListType);
+				employerList = Util.GSON.fromJson(result, employerListType);
+				for (Employer employer : employerList) {
+					employer.setSkills(getSkillsForEmployer(employer));
+				}
 			} catch (JsonParseException e) {
 				e.printStackTrace();
 				// do nothing else
@@ -110,13 +153,19 @@ public class WAServiceClient {
 		return employerList;
 	}
 	
-	public List<User> getUsers() {
+	public List<User> getUsers(SharedPreferences preferences) {
 		List<User> userList = new ArrayList<>();
 		String result = getJson(Endpoints.GET_EMPLOYERS, null);
 		if (result != null) {
-			Type userListType = new TypeToken<List<User>>() {}.getType();
+			preferences.edit()
+					   .putString("users", result)
+					   .apply();
+			Type userListType = new TypeToken<List<AppUser>>() {}.getType();
 			try {
-				userList = gson.fromJson(result, userListType);
+				userList = Util.GSON.fromJson(result, userListType);
+				for (User user : userList) {
+					user.setSkills(getSkillsForUser(user));
+				}
 			} catch (JsonParseException e) {
 				e.printStackTrace();
 				// do nothing else
@@ -156,9 +205,15 @@ public class WAServiceClient {
 			while (reader.read(array, 0, array.length) != -1) {
 				buffer.append(array);
 			}
-			if (buffer.charAt(0) == '[') {
-				buffer.deleteCharAt(0)
-					  .deleteCharAt(buffer.lastIndexOf("]"));
+			String endpointNameLower = endpoint.name()
+											   .toLowerCase();
+			// hey, it works
+			boolean keepArray = endpointNameLower.contains("users") || endpointNameLower.contains("employers") || endpointNameLower.contains("matches") || endpointNameLower.contains("skills");
+			if (!keepArray) {
+				if (buffer.charAt(0) == '[') {
+					buffer.deleteCharAt(0)
+						  .deleteCharAt(buffer.lastIndexOf("]"));
+				}
 			}
 			return buffer.toString()
 						 .trim();
@@ -171,8 +226,7 @@ public class WAServiceClient {
 	}
 	
 	public enum Endpoints {
-		LOGIN_USER("loginUser"),
-		LOGIN_EMPLOYER("loginEmp"),
+		LOGIN("login"),
 		REGISTER_USER("regi"),
 		REGISTER_EMPLOYER("regiemployer"),
 		UPDATE_USER("setDataUser"),
@@ -185,11 +239,13 @@ public class WAServiceClient {
 		GET_MATCHES("getMatches"),
 		ADD_MATCHES("matches"),
 		GET_EMPLOYERS("getAllEmp"),
-		GET_USERS("getAllUser");
+		GET_USERS("getAllUser"),
+		GET_SKILLS_USER("getUserSkill"),
+		GET_SKILLS_EMPLOYER("getEmpSkill");
 		
 		private final String endpointName;
 		
-		private Endpoints(String endpointName) {
+		Endpoints(String endpointName) {
 			this.endpointName = endpointName;
 		}
 		

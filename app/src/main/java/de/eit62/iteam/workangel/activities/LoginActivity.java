@@ -11,18 +11,25 @@ import android.widget.Button;
 import android.widget.EditText;
 import de.eit62.iteam.workangel.R;
 import de.eit62.iteam.workangel.beans.AppUser;
-import de.eit62.iteam.workangel.fragments.TaskFragment;
+import de.eit62.iteam.workangel.beans.Employer;
+import de.eit62.iteam.workangel.beans.User;
+import de.eit62.iteam.workangel.fragments.LoginTaskFragment;
+import de.eit62.iteam.workangel.interfaces.TaskCallback;
+import de.eit62.iteam.workangel.util.Util;
 
 /**
  * A login screen that offers login via email/password.
+ *
+ * @author Mark Tohai
+ * @author Lukas Tegethoff
  */
-public class LoginActivity extends AppCompatActivity implements TaskFragment.TaskCallback<Void, AppUser> {
+public class LoginActivity extends BaseActivity implements TaskCallback<Void, AppUser> {
 	
-	private static final String TAG_TASK_FRAGMENT = "task_fragment";
+	private static final String TAG_LOGIN_TASK_FRAGMENT = "login_task_fragment";
 	/**
 	 * Keep track of the login task to ensure we can cancel it if requested.
 	 */
-	private TaskFragment taskFragment = null;
+	private LoginTaskFragment loginTaskFragment = null;
 	
 	// UI references.
 	private EditText mEmailView;
@@ -36,12 +43,12 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 		setContentView(R.layout.activity_login);
 		
 		FragmentManager fragmentManager = getFragmentManager();
-		this.taskFragment = (TaskFragment) fragmentManager.findFragmentByTag(TAG_TASK_FRAGMENT);
+		this.loginTaskFragment = (LoginTaskFragment) fragmentManager.findFragmentByTag(TAG_LOGIN_TASK_FRAGMENT);
 		
-		if (this.taskFragment == null) {
-			this.taskFragment = new TaskFragment();
+		if (this.loginTaskFragment == null) {
+			this.loginTaskFragment = new LoginTaskFragment();
 			fragmentManager.beginTransaction()
-						   .add(this.taskFragment, TAG_TASK_FRAGMENT)
+						   .add(this.loginTaskFragment, TAG_LOGIN_TASK_FRAGMENT)
 						   .commit();
 		}
 		
@@ -108,7 +115,7 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 			// Show a progress spinner, and kick off a background task to
 			// perform the user login attempt.
 			showProgress(true);
-			this.taskFragment.executeLogin(username, password);
+			this.loginTaskFragment.executeLogin(username, password);
 		}
 		
 	}
@@ -127,12 +134,12 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 	
 	@Override
 	public void onPreExecute() {
-		// do nothing
+		// nothing to do
 	}
 	
 	@Override
-	public void onProgressUpdate(Void aVoid) {
-		// do nothing
+	public void onProgressUpdate(Void... progress) {
+		// publishProgress is not used for LoginTask, so nothing to do here.
 	}
 	
 	@Override
@@ -143,10 +150,18 @@ public class LoginActivity extends AppCompatActivity implements TaskFragment.Tas
 	@Override
 	public void onPostExecute(AppUser appUser) {
 		if (appUser != null) {
-			Intent i = new Intent(this, MainActivity.class);
+			if (appUser instanceof User) {
+				User user = (User) appUser;
+				getSharedPreferences("users", MODE_PRIVATE).edit().putString("currentUser", Util.GSON.toJson(user)).apply();
+			} else {
+				Employer employer = (Employer) appUser;
+				getSharedPreferences("users", MODE_PRIVATE).edit().putString("currentUser", Util.GSON.toJson(employer)).apply();
+			}
+			setCurrentUser(appUser);
+			Intent i = new Intent(this, MatchingActivity.class);
 			startActivity(i);
 		} else {
-			mPasswordView.setError(getString(R.string.error_incorrect_password));
+			mPasswordView.setError(getString(R.string.error_communication));
 			mPasswordView.requestFocus();
 		}
 		showProgress(false);

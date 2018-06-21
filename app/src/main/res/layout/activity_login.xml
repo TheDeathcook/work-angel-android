@@ -23,8 +23,9 @@
 
 	<ImageView
 			android:layout_width="match_parent"
-			android:layout_height="111dp"
-			app:srcCompat="@mipmap/logo_workangel" />
+			android:layout_height="242dp"
+			app:srcCompat="@drawable/workangel_logo"
+			android:scaleType="fitCenter" />
 
 	<ScrollView
 			android:id="@+id/login_form"
@@ -35,7 +36,8 @@
 				android:id="@+id/email_login_form"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
-				android:orientation="vertical">
+				android:orientation="vertical"
+				android:layout_marginTop="10px">
 
 			<android.support.design.widget.TextInputLayout
 					android:layout_width="match_parent"
@@ -48,7 +50,8 @@
 						android:hint="@string/prompt_email"
 						android:inputType="textEmailAddress"
 						android:maxLines="1"
-						android:singleLine="true" />
+						android:singleLine="true"
+						android:text="MadMax" />
 
 			</android.support.design.widget.TextInputLayout>
 
@@ -66,7 +69,8 @@
 						android:imeOptions="actionUnspecified"
 						android:inputType="textPassword"
 						android:maxLines="1"
-						android:singleLine="true" />
+						android:singleLine="true"
+						android:text="Test123!" />
 
 			</android.support.design.widget.TextInputLayout>
 
